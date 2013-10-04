@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -u
+
+function install_pkgs() {
+    DEBIAN_FRONTEND=noninteractive sudo apt-get install -f -q -y guestfish virt-manager python-virtinst libvirt-bin libvirt-doc virt-viewer
+}
+
+# Borrowed from
+# http://agilesysadmin.wordpress.com/2013/09/09/simple-unattended-ubuntu-install-in-a-vm/
+# Thanks!
+function install_os() {
+    virt-install \
+	--connect qemu:///system \
+	--name ubuntu \
+	--ram 512 \
+	--disk pool=default,size=8,bus=virtio,sparse=false \
+	--network network=default,model=virtio \
+	--location http://us.archive.ubuntu.com/ubuntu/dists/saucy/main/installer-amd64/ \
+	--initrd-inject=preseeds/preseed.cfg \
+	--extra-args="locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layoutcode=us file=file:/preseed.cfg vga=788 quiet" \
+	--os-type=linux \
+	--virt-type kvm \
+	--video=vga \
+	--noreboot
+}
+
+#install_pkgs
+install_os

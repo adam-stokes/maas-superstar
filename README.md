@@ -1,5 +1,4 @@
-maas-suparstar
-==============
+# maas-superstar
 
 1 MAAS, 1-99 Nodes, juju <3, and a monkey.. somewhere..
 
@@ -32,3 +31,14 @@ Precise, Quantal, Raring, Saucy, and any future releases.
 % ./youre-a-star
 ```
 
+# COPYRIGHT
+
+2013 Adam Stokes
+
+# AUTHOR
+
+Adam Stokes <adam.stokes@ubuntu.com>
+
+# LICENSE
+
+AGPLv3
