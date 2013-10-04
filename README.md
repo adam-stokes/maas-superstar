@@ -1,4 +1,4 @@
 maas-suparstar
 ==============
 
-2 Nodes, 1 MAAS
+1 MAAS, 1-99 Nodes, juju <3, and a monkey.. somewhere..
