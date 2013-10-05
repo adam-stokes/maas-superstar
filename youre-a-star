@@ -2,28 +2,66 @@
 
 set -u
 
+NUM_NODES=${MAAS_NODES:-3}
+
 function install_pkgs() {
-    DEBIAN_FRONTEND=noninteractive sudo apt-get install -f -q -y guestfish virt-manager python-virtinst libvirt-bin libvirt-doc virt-viewer
+    DEBIAN_FRONTEND=noninteractive sudo apt-get install -f -q -y \
+	guestfish \
+	virt-manager \
+	virtinst \
+	libvirt-bin \
+	libvirt-doc \
+	virt-viewer
 }
 
 # Borrowed from
 # http://agilesysadmin.wordpress.com/2013/09/09/simple-unattended-ubuntu-install-in-a-vm/
 # Thanks!
-function install_os() {
+
+function install_maas() {
     virt-install \
 	--connect qemu:///system \
-	--name ubuntu \
-	--ram 512 \
-	--disk pool=default,size=8,bus=virtio,sparse=false \
-	--network network=default,model=virtio \
+	--name maas \
+	--ram 1024 \
+	--cpu host \
+	--vcpus 2 \
+	--nographics \
+	--disk pool=default,size=20,bus=virtio,sparse=false \
+	--network bridge=virbr0 \
 	--location http://us.archive.ubuntu.com/ubuntu/dists/saucy/main/installer-amd64/ \
-	--initrd-inject=preseeds/preseed.cfg \
-	--extra-args="locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layoutcode=us file=file:/preseed.cfg vga=788 quiet" \
+	--initrd-inject=preseeds/preseed-maas.cfg \
+	--extra-args="locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layoutcode=us file=file:/preseed-maas.cfg vga=788 quiet console=tty0 utf8 console=ttyS0,115200" \
 	--os-type=linux \
-	--virt-type kvm \
-	--video=vga \
+	--force \
+	--noreboot
+
+}
+
+function install_node() {
+    virt-install \
+	--connect qemu:///system \
+	--name node1 \
+	--ram 512 \
+	--cpu host \
+	--vcpus 1 \
+	--disk pool=default,size=20,bus=virtio,sparse=false \
+	--network bridge=virbr0 \
+	--location http://us.archive.ubuntu.com/ubuntu/dists/saucy/main/installer-amd64/ \
+	--initrd-inject=preseeds/preseed-node.cfg \
+	--extra-args="locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layoutcode=us file=file:/preseed-node.cfg vga=788 quiet console=tty0 utf8 console=ttyS0,115200" \
+	--os-type=linux \
+	--force \
 	--noreboot
 }
 
-#install_pkgs
-install_os
+function clone_nodes() {
+    for i in `seq 1 ${NUM_NODES}`; do
+	virt-clone --connect qemu:///system -o node -n node${i} -f /var/lib/libvirt/images/node${i}.img
+    done
+}
+
+install_pkgs
+#install_maas
+install_node
+
+echo 'Success'
