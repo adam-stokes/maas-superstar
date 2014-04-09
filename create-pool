@@ -1,0 +1,4 @@
+#!/bin/bash
+
+virsh pool-create pool.xml
+virsh pool-refresh maas

@@ -1,0 +1,18 @@
+<pool type='dir'>
+  <name>maas</name>
+  <uuid>431091db-2ae3-fd91-5302-e439702d762e</uuid>
+  <capacity unit='bytes'>98294312960</capacity>
+  <allocation unit='bytes'>32064241664</allocation>
+  <available unit='bytes'>66230071296</available>
+  <source>
+  </source>
+  <target>
+    <path>/var/lib/libvirt/images</path>
+    <permissions>
+      <mode>0711</mode>
+      <owner>-1</owner>
+      <group>-1</group>
+    </permissions>
+  </target>
+</pool>
+
